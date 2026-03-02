@@ -5,11 +5,22 @@ pipeline {
         }
     }
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
     stages {
 
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+
+        stage('Verify Environment') {
+            steps {
+                sh 'java -version'
+                sh 'mvn -version'
             }
         }
 
@@ -36,8 +47,18 @@ pipeline {
                 branch 'prod'
             }
             steps {
-                echo "Deploying production build..."
+                echo "Deploying production artifact..."
+                sh 'ls -l target'
             }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline completed successfully."
+        }
+        failure {
+            echo "Pipeline failed."
         }
     }
 }
